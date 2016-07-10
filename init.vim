@@ -21,21 +21,22 @@ map <F1> <Del>
 map! <F1> <Del>
 
 " terminal options
+let g:terminal_scrollback_buffer_size = 10000
 tnoremap <Esc> <C-\><C-n>
 autocmd BufEnter * if &buftype ==# 'terminal' | startinsert | endif
-tnoremap <S-Down> <C-\><C-n>:tabnew<CR>
-tnoremap <C-Left> <C-\><C-n>:call WinLeft()<CR>
-tnoremap <C-Down> <C-\><C-n><C-w>j
-tnoremap <C-Up> <C-\><C-n><C-w>k
-tnoremap <C-Right> <C-\><C-n>:call WinRight()<CR>
+tnoremap <silent> <S-Down> <C-\><C-n>:tabnew<CR>
+tnoremap <silent> <C-Left> <C-\><C-n>:call <SID>winLeft()<CR>
+tnoremap <silent> <C-Down> <C-\><C-n><C-w>j
+tnoremap <silent> <C-Up> <C-\><C-n><C-w>k
+tnoremap <silent> <C-Right> <C-\><C-n>:call <SID>winRight()<CR>
 
-nnoremap <S-Down> :tabnew<CR>
-nnoremap <C-Left> :call WinLeft()<CR>
-nnoremap <C-Down> <C-w>j
-nnoremap <C-Up> <C-w>k
-nnoremap <C-Right> :call WinRight()<CR>
+nnoremap <silent> <S-Down> :tabnew<CR>
+nnoremap <silent> <C-Left> :call <SID>winLeft()<CR>
+nnoremap <silent> <C-Down> <C-w>j
+nnoremap <silent> <C-Up> <C-w>k
+nnoremap <silent> <C-Right> :call <SID>winRight()<CR>
 
-function! WinLeft()
+function! s:winLeft()
     " move one window left or if left-most, move one tab left
     let oldw = winnr()
     wincmd h
@@ -46,7 +47,7 @@ function! WinLeft()
     endif
 endfunction
 
-function! WinRight()
+function! s:winRight()
     let oldw = winnr()
     wincmd l
     if winnr() ==# oldw
@@ -57,3 +58,14 @@ endfunction
 
 " better titles in tabline
 set tabline=%!TabLine()
+
+nnoremap <silent> cd :call <SID>cd()<CR>
+function! s:cd()
+    " terminals get their own pwd's
+    " editor windows have a common pwd
+    if &buftype ==# 'terminal'
+        exe 'lcd /proc/' . b:terminal_job_pid . '/cwd'
+    else
+        exe 'cd ' . expand('%:p:h')
+    endif
+endfunction
