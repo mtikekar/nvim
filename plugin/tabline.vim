@@ -1,7 +1,10 @@
 " shows the terminal title for terminal buffers
 " and default title for normal buffers
 
-autocmd BufEnter * let t:currbufnr = bufnr('%')
+augroup tabline
+    autocmd!
+    autocmd BufEnter * let t:currbufnr = bufnr('%')
+augroup end
 
 function! s:getBufName(n)
     let s = getbufvar(a:n, 'term_title')
@@ -25,6 +28,9 @@ function! TabLine()
 
         " the actual label
         let bufnum = gettabvar(i, 'currbufnr')
+        if empty(bufnum)
+             let bufnum = tabpagebuflist(i)[0]
+        endif
         let numwins = tabpagewinnr(i, '$')
         let s .= numwins == 1? '': (numwins.' ')
         let s .= s:getBufName(bufnum) . ' '

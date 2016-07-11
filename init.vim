@@ -2,6 +2,10 @@ call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 call plug#end()
 
+augroup init
+    autocmd!
+augroup end
+
 let $vim = '~/.config/nvim'
 let $vimrc = $vim . '/init.vim'
 
@@ -23,7 +27,7 @@ map! <F1> <Del>
 " terminal options
 let g:terminal_scrollback_buffer_size = 10000
 tnoremap <Esc> <C-\><C-n>
-autocmd BufEnter * if &buftype ==# 'terminal' | startinsert | endif
+autocmd init BufEnter * if &buftype ==# 'terminal' | startinsert | endif
 tnoremap <silent> <S-Down> <C-\><C-n>:tabnew<CR>
 tnoremap <silent> <C-Left> <C-\><C-n>:call <SID>winLeft()<CR>
 tnoremap <silent> <C-Down> <C-\><C-n><C-w>j
@@ -59,13 +63,7 @@ endfunction
 " better titles in tabline
 set tabline=%!TabLine()
 
-nnoremap <silent> cd :call <SID>cd()<CR>
-function! s:cd()
-    " terminals get their own pwd's
-    " editor windows have a common pwd
-    if &buftype ==# 'terminal'
-        exe 'lcd /proc/' . b:terminal_job_pid . '/cwd'
-    else
-        exe 'cd ' . expand('%:p:h')
-    endif
-endfunction
+nnoremap <silent> cd :exe 'cd ' . (&buftype ==# 'terminal'? '/proc/'.b:terminal_job_pid.'/cwd' : expand('%:p:h'))<CR>
+command! W w
+command! Q q
+command! WQ wq
