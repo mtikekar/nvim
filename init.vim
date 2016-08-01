@@ -42,7 +42,7 @@ set expandtab tabstop=4 softtabstop=4 shiftwidth=4
 set foldmethod=indent foldlevel=99 foldtext= foldignore=
 set clipboard=unnamedplus " copy/paste using system clipboard
 
-set tabline=%!TabLine() " better titles in tabline
+set tabline=%!TabLine(30) " better titles in tabline
 set undofile " presistent undo
 set ruler " row/col number in statusline
 
