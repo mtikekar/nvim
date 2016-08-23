@@ -7,8 +7,7 @@ call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'bfredl/nvim-ipy', {'do': DoRemote}
-Plug 'Shougo/deoplete.nvim', {'do': DoRemote}
-Plug 'Shougo/neoinclude.vim'
+Plug 'vim-scripts/L9' | Plug 'othree/vim-autocomplpop'
 Plug 'mtikekar/vim-bsv'
 Plug 'dag/vim-fish'
 Plug 'tpope/vim-fugitive'
@@ -27,7 +26,6 @@ augroup END
 let mapleader = "\<Space>"
 let $vimrc = expand('<sfile>')
 let $vim = expand('<sfile>:p:h')
-let g:deoplete#enable_at_startup = 1
 set shell=fish
 set title
 
@@ -70,6 +68,8 @@ map Y y$
 " clear search highlights
 nnoremap <silent> , :nohlsearch<cr>
 nnoremap <silent> <leader>, :ToggleWhitespace<cr>
+noremap ; :
+noremap : <Nop>
 
 " show syntax information of character under cursor
 function! s:syn_name(transparent, translate)
@@ -85,7 +85,7 @@ function! s:syn_stack()
     return join(map(s, 'synIDattr(v:val, "name")'), ' > ')
 endfunction
 
-map <F10> :echo 'hi<'.<SID>syn_name(1, 0).'> trans<'.<SID>syn_name(0, 0).'> lo<'.<SID>syn_name(1, 1).'>'<CR>
+map <F10> :echo printf('hi<%s> trans<%s> lo<%s>', <SID>syn_name(1,0), <SID>syn_name(0,0), <SID>syn_name(1,1))<CR>
 map <leader><F10> :echo <SID>syn_stack()<CR>
 
 " tag navigation
@@ -102,19 +102,28 @@ let g:terminal_scrollback_buffer_size = 10000
 autocmd init BufEnter * if &buftype ==# 'terminal' | startinsert | endif
 " q to exit normal mode inside terminal. like less
 autocmd init TermOpen * nnoremap <buffer> q i
-tnoremap <silent> <Esc> <C-\><C-n>G:call search('^.', 'bc')<CR>
-tnoremap <Esc><Esc> <Esc>
-tnoremap <silent> <S-Down> <C-\><C-n>:tabnew<CR>
-tnoremap <silent> <C-Left> <C-\><C-n>:call <SID>nav_left()<CR>
-tnoremap <silent> <C-Down> <C-\><C-n><C-w>j
-tnoremap <silent> <C-Up> <C-\><C-n><C-w>k
-tnoremap <silent> <C-Right> <C-\><C-n>:call <SID>nav_right()<CR>
+tnoremap <silent> <Esc><Esc> <C-\><C-n>G:call search('^.', 'bc')<CR>
+tnoremap <silent> <C-H> <C-\><C-n>:call <SID>nav_left()<CR>
+tnoremap <silent> <C-J> <C-\><C-n><C-w>j
+tnoremap <silent> <C-K> <C-\><C-n><C-w>k
+tnoremap <silent> <C-L> <C-\><C-n>:call <SID>nav_right()<CR>
 
-nnoremap <silent> <S-Down> :tabnew<CR>
-nnoremap <silent> <C-Left> :call <SID>nav_left()<CR>
-nnoremap <silent> <C-Down> <C-w>j
-nnoremap <silent> <C-Up> <C-w>k
-nnoremap <silent> <C-Right> :call <SID>nav_right()<CR>
+nnoremap <silent> <C-H> :call <SID>nav_left()<CR>
+nnoremap <silent> <C-J> <C-w>j
+nnoremap <silent> <C-K> <C-w>k
+nnoremap <silent> <C-L> :call <SID>nav_right()<CR>
+
+inoremap <silent> <C-H> <C-o>:call <SID>nav_left()<CR>
+inoremap <silent> <C-J> <C-o><C-w>j
+inoremap <silent> <C-K> <C-o><C-w>k
+inoremap <silent> <C-L> <C-o>:call <SID>nav_right()<CR>
+
+inoremap <Left> <Nop>
+inoremap <Right> <Nop>
+nnoremap <Left> <Nop>
+nnoremap <Down> <Nop>
+nnoremap <Up> <Nop>
+nnoremap <Right> <Nop>
 
 function! s:nav_left()
     " move one window left or if left-most, move one tab left
