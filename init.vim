@@ -26,7 +26,7 @@ augroup END
 let mapleader = "\<Space>"
 let $vimrc = expand('<sfile>')
 let $vim = expand('<sfile>:p:h')
-set shell=fish
+set shell=$HOME/.local/bin/fish
 set title
 
 " solarized options
@@ -68,8 +68,6 @@ map Y y$
 " clear search highlights
 nnoremap <silent> , :nohlsearch<cr>
 nnoremap <silent> <leader>, :ToggleWhitespace<cr>
-noremap ; :
-noremap : <Nop>
 
 " show syntax information of character under cursor
 function! s:syn_name(transparent, translate)

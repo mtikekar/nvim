@@ -18,7 +18,7 @@ parser.add_argument('files', nargs='+', help='one or more files to edit')
 group = parser.add_mutually_exclusive_group()
 group.add_argument('-o', dest='mode', action='store_const', const='split', help='open in horizontally split windows') 
 group.add_argument('-O', dest='mode', action='store_const', const='vsplit', help='open in vertically split windows')
-group.add_argument('-p', dest='mode', action='store_const', const='tabedit', help='open in separate tabs')
+group.add_argument('-p', dest='mode', action='store_const', const='-tabedit', help='open in separate tabs')
 group.add_argument('-d', dest='mode', action='store_const', const='vert diffsplit', help='open in diff mode')
 args = parser.parse_args()
 if not args.mode:
@@ -31,7 +31,7 @@ nvim = attach("socket", path=addr)
 nvim.input('<c-\\><c-n>')  # exit terminal mode
 # first one is opened in new tab
 nvim.command('cd ' + escape(os.getcwd()))
-nvim.command('tabedit ' + escape(args.files[0]))
+nvim.command('-tabedit ' + escape(args.files[0]))
 
 for f in args.files[1:]:
     nvim.command(args.mode + ' ' + escape(f))
