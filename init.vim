@@ -25,7 +25,7 @@ augroup END
 let mapleader = "\<Space>"
 let $vimrc = expand('<sfile>')
 let $vim = expand('<sfile>:p:h')
-set shell=$HOME/.local/bin/fish
+set shell=fish
 set title
 
 " solarized options
