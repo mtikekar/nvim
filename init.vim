@@ -13,7 +13,6 @@ Plug 'dag/vim-fish'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-endwise'
 Plug 'rickhowe/diffchar.vim'
-Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 runtime! macros/matchit.vim
@@ -43,15 +42,6 @@ set clipboard=unnamedplus " copy/paste using system clipboard
 set tabline=%!TabLine(30) " better titles in tabline
 set undofile " presistent undo
 set ruler " row/col number in statusline
-
-" auto-pair mappings
-let g:AutoPairsMapBS = 0
-let g:AutoPairsMapCh = 0
-let g:AutoPairsMapCR = 0
-let g:AutoPairsMapSpace = 0
-let g:AutoPairsShortcutToggle = ''
-let g:AutoPairsShortcutFastWrap = ''
-let g:AutoPairsShortcutJump = ''
 
 " commands
 command! W w
@@ -142,6 +132,36 @@ function! s:nav_right()
         wincmd t
     endif
 endfunction
+
+" Insert mappings for ( [ { ' "
+" [ -> [], [[ -> [, [] -> [], ] -> ]
+" ' -> '', '' -> '
+function! s:isCurrChar(c)
+    return getline(".")[col(".") - 1] == a:c
+endfunction
+
+function! s:sameCompl(c)
+    return s:isCurrChar(a:c)? "\<Right>" : (a:c . a:c . "\<Left>")
+endfunction
+
+function! s:endCompl(e)
+    return s:isCurrChar(a:e)? "\<Right>" : a:e
+endfunction
+
+function! s:genCompl(b, e)
+    execute "inoremap " . a:b . " " . a:b . a:e . "<Left>"
+    execute "inoremap " . a:b . a:b . " " . a:b
+    execute "inoremap " . a:b . a:e . " " . a:b . a:e
+    execute "inoremap <expr> " . a:e . " <SID>endCompl('" . a:e . "')"
+endfunction
+
+call s:genCompl('[', ']')
+call s:genCompl('(', ')')
+call s:genCompl('{', '}')
+inoremap <expr> " <SID>sameCompl('"')
+inoremap "" "
+inoremap <expr> ' <SID>sameCompl("'")
+inoremap '' '
 
 highlight ExtraWhitespace ctermbg=black
 " color the 81st column of wide lines
