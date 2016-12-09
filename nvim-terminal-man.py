@@ -13,4 +13,8 @@ if not addr:
 
 from neovim import attach
 nvim = attach("socket", path=addr)
+
+if 'MANPATH' in os.environ:
+    nvim.command("let $MANPATH = '{}'".format(os.environ['MANPATH']))
+
 nvim.command('Man ' + ' '.join(sys.argv[1:]))
