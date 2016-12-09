@@ -31,7 +31,10 @@ nvim = attach("socket", path=addr)
 nvim.input('<c-\\><c-n>')  # exit terminal mode
 # first one is opened in new tab
 nvim.command('cd ' + escape(os.getcwd()))
-nvim.command('-tabedit ' + escape(args.files[0]))
 
-for f in args.files[1:]:
+if len(args.files) > 1 or args.mode == 'edit':
+    nvim.command('-tabedit ' + escape(args.files[0]))
+    del args.files[0]
+
+for f in args.files:
     nvim.command(args.mode + ' ' + escape(f))
