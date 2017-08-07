@@ -166,6 +166,7 @@ inoremap '' '
 highlight ExtraWhitespace ctermbg=black
 " color the 81st column of wide lines
 autocmd init BufRead * if &buftype !=# 'terminal' | call matchadd('ColorColumn', '\%81v', 100) | endif
+set textwidth=0
 
 function! s:bsv_set_path(srcdir)
     let pathfile = a:srcdir . '/bsvpath'
