@@ -6,6 +6,21 @@ augroup tabline
     autocmd BufEnter * let t:currbufnr = bufnr('%')
 augroup end
 
+function s:rel_path(fname)
+    let flist = split(a:fname, '/')
+    let dlist = split(getcwd(), '/')
+
+    let i = 0
+    while i < min([len(flist), len(dlist)])
+        if flist[i] !=# dlist[i]
+            break
+        endif
+        let i += 1
+    endwhile
+
+    return repeat('../', len(dlist) - i) . join(flist[i:], '/')
+endfunction
+
 function! s:get_buf_name(n)
     let s = getbufvar(a:n, 'term_title')
     if !empty(s)
@@ -14,7 +29,10 @@ function! s:get_buf_name(n)
     if empty(bufname(a:n))
         return '[No Name]'
     endif
-    return pathshorten(expand('#'.a:n.':~:.'))
+
+    let p1 = pathshorten(expand('#'.a:n.':~:.'))
+    let p2 = pathshorten(s:rel_path(expand('#'.a:n)))
+    return len(p2) < len(p1) ? p2 : p1
 endfunction
 
 function! s:cram_str(s, maxlen)
