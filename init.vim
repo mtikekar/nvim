@@ -13,6 +13,7 @@ Plug 'dag/vim-fish'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-endwise'
 Plug 'rickhowe/diffchar.vim'
+Plug 'zyedidia/literate.vim'
 call plug#end()
 
 runtime! macros/matchit.vim
@@ -27,6 +28,7 @@ let $vimrc = expand('<sfile>')
 let $vim = expand('<sfile>:p:h')
 set shell=fish
 set title
+set mouse=a
 
 " solarized options
 let g:solarized_termtrans=1
