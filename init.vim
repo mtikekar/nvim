@@ -1,12 +1,7 @@
-function! DoRemoteFn(info)
-    UpdateRemotePlugins
-endfunction
-let DoRemote = function('DoRemoteFn')
-
 call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'bfredl/nvim-ipy', {'do': DoRemote}
+Plug 'hkupty/iron.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'vim-scripts/L9' | Plug 'othree/vim-autocomplpop'
 Plug 'mtikekar/vim-bsv'
 Plug 'dag/vim-fish'
@@ -14,6 +9,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-endwise'
 Plug 'rickhowe/diffchar.vim'
 Plug 'zyedidia/literate.vim'
+Plug 'JuliaEditorSupport/julia-vim'
 call plug#end()
 
 runtime! macros/matchit.vim
@@ -60,6 +56,10 @@ map Y y$
 " clear search highlights
 nnoremap <silent> , :nohlsearch<cr>
 nnoremap <silent> <leader>, :ToggleWhitespace<cr>
+
+" iron.nvim mappings
+nmap cap ctrap
+nmap cc 0ctr$
 
 " show syntax information of character under cursor
 function! s:syn_name(transparent, translate)
