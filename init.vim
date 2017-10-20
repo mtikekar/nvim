@@ -2,14 +2,13 @@ call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'hkupty/iron.nvim', {'do': ':UpdateRemotePlugins'}
-Plug 'vim-scripts/L9' | Plug 'othree/vim-autocomplpop'
 Plug 'mtikekar/vim-bsv'
 Plug 'dag/vim-fish'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-endwise'
 Plug 'rickhowe/diffchar.vim'
-Plug 'zyedidia/literate.vim'
 Plug 'JuliaEditorSupport/julia-vim'
+Plug 'roxma/nvim-completion-manager'
 call plug#end()
 
 runtime! macros/matchit.vim
@@ -46,11 +45,36 @@ command! W w
 command! Q q
 command! WQ wq
 command! -complete=help -nargs=? H vert help <args>
+cnoreabbrev nt tabnew +term
+cnoreabbrev vt vsp +term
+cnoreabbrev ht split +term
+cnoreabbrev repl IronRepl
+let g:iron_repl_open_cmd = "call ReplSplitWindow()"
+
+function! ReplSplitWindow()
+    if winwidth('%') > 3 * winheight('%')
+        vsplit
+    else
+        split
+    endif
+endfunction
+
+if has("macunix")
+    function! s:terminalCwd()
+        let f = systemlist("lsof -Fn -a -d cwd -p " . b:terminal_job_pid)
+        " last element in list f is 'n<cwd>'. Remove 'n' and return
+        return strcharpart(f[-1], 1)
+    endfunction
+else
+    function! s:terminalCwd()
+        return '/proc/' . b:terminal_job_pid . '/cwd'
+    endfunction
+end
 
 " key mappings
 " fold
 nnoremap <leader><space> za
-nnoremap <silent> cd :exe 'cd ' . (&buftype ==# 'terminal'? '/proc/'.b:terminal_job_pid.'/cwd' : expand('%:p:h'))<CR>
+nnoremap <silent> cd :exe 'cd ' . (&buftype ==# 'terminal'? <SID>terminalCwd() : expand('%:p:h'))<CR>
 " Y like D
 map Y y$
 " clear search highlights
@@ -59,15 +83,15 @@ nnoremap <silent> <leader>, :ToggleWhitespace<cr>
 
 " iron.nvim mappings
 nmap cap ctrap
-nmap cc 0ctr$
+nmap <silent> cc :call IronSend(getline('.'))<cr>j
 
 " show syntax information of character under cursor
 function! s:syn_name(transparent, translate)
-    let s = synID(line('.'), col('.'), a:transparent)
+    let s = synid(line('.'), col('.'), a:transparent)
     if a:translate
-        let s = synIDtrans(s)
+        let s = synidtrans(s)
     endif
-    return synIDattr(s, 'name')
+    return synidattr(s, 'name')
 endfunction
 
 function! s:syn_stack()
@@ -194,3 +218,14 @@ function! s:read_template(ext)
     silent! exe '0r $vim/templates/template.'.a:ext
     %s/\v:VIM_EVAL:(.{-}):END_EVAL:/\=eval(submatch(1))/ge
 endfunction
+
+" julia
+let g:default_julia_version = '0.6'
+let g:latex_to_unicode_auto = 1
+
+" override mapping for single quote
+function! s:unmapQuotes()
+    inoremap <buffer> <nowait> ' '
+endfunction
+
+autocmd init FileType verilog,systemverilog,bsv,julia call <SID>unmapQuotes()
