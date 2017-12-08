@@ -112,7 +112,7 @@ if $TERM =~# '^st'
 endif
 
 " terminal options
-let g:terminal_scrollback_buffer_size = 10000
+set scrollback=10000
 autocmd init BufEnter * if &buftype ==# 'terminal' | startinsert | endif
 " q to exit normal mode inside terminal. like less
 autocmd init TermOpen * nnoremap <buffer> q i
