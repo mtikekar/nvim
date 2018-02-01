@@ -19,8 +19,6 @@ augroup END
 
 " settings
 let mapleader = "\<Space>"
-let $vimrc = expand('<sfile>')
-let $vim = expand('<sfile>:p:h')
 set shell=fish
 set title
 set mouse=a
@@ -79,7 +77,6 @@ nnoremap <silent> cd :exe 'cd ' . (&buftype ==# 'terminal'? <SID>terminalCwd() :
 map Y y$
 " clear search highlights
 nnoremap <silent> , :nohlsearch<cr>
-nnoremap <silent> <leader>, :ToggleWhitespace<cr>
 
 " iron.nvim mappings
 nmap cap ctrap
@@ -87,11 +84,11 @@ nmap <silent> cc :call IronSend(getline('.'))<cr>j
 
 " show syntax information of character under cursor
 function! s:syn_name(transparent, translate)
-    let s = synid(line('.'), col('.'), a:transparent)
+    let s = synID(line('.'), col('.'), a:transparent)
     if a:translate
-        let s = synidtrans(s)
+        let s = synIDtrans(s)
     endif
-    return synidattr(s, 'name')
+    return synIDattr(s, 'name')
 endfunction
 
 function! s:syn_stack()
@@ -186,8 +183,10 @@ call s:genCompl('(', ')')
 call s:genCompl('{', '}')
 inoremap <expr> " <SID>sameCompl('"')
 inoremap "" "
+inoremap """ """
 inoremap <expr> ' <SID>sameCompl("'")
 inoremap '' '
+inoremap ''' '''
 
 highlight ExtraWhitespace ctermbg=black
 " color the 81st column of wide lines
