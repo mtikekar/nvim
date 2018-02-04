@@ -1,7 +1,7 @@
 call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'hkupty/iron.nvim', {'do': ':UpdateRemotePlugins'}
+Plug 'mtikekar/nvim-send-to-term'
 Plug 'mtikekar/vim-bsv'
 Plug 'dag/vim-fish'
 Plug 'tpope/vim-fugitive'
@@ -77,10 +77,6 @@ nnoremap <silent> cd :exe 'cd ' . (&buftype ==# 'terminal'? <SID>terminalCwd() :
 map Y y$
 " clear search highlights
 nnoremap <silent> , :nohlsearch<cr>
-
-" iron.nvim mappings
-nmap cap ctrap
-nmap <silent> cc :call IronSend(getline('.'))<cr>j
 
 " show syntax information of character under cursor
 function! s:syn_name(transparent, translate)
