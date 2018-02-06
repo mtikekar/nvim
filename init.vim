@@ -1,14 +1,14 @@
 call plug#begin()
 Plug 'altercation/vim-colors-solarized'
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'mtikekar/nvim-send-to-term'
+Plug 'mtikekar/nvim-send-to-term', {'do': ':UpdateRemotePlugins'}
 Plug 'mtikekar/vim-bsv'
 Plug 'dag/vim-fish'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-endwise'
 Plug 'rickhowe/diffchar.vim'
 Plug 'JuliaEditorSupport/julia-vim'
-Plug 'roxma/nvim-completion-manager'
+Plug 'lifepillar/vim-mucomplete'
 call plug#end()
 
 runtime! macros/matchit.vim
@@ -218,3 +218,8 @@ function! s:unmapQuotes()
 endfunction
 
 autocmd init FileType verilog,systemverilog,bsv,julia call <SID>unmapQuotes()
+
+" mucomplete options
+let g:mucomplete#enable_auto_at_startup = 1
+set completeopt=menuone,preview,noinsert
+set shortmess+=c    " Shut off completion messages
