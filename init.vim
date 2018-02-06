@@ -46,16 +46,6 @@ command! -complete=help -nargs=? H vert help <args>
 cnoreabbrev nt tabnew +term
 cnoreabbrev vt vsp +term
 cnoreabbrev ht split +term
-cnoreabbrev repl IronRepl
-let g:iron_repl_open_cmd = "call ReplSplitWindow()"
-
-function! ReplSplitWindow()
-    if winwidth('%') > 3 * winheight('%')
-        vsplit
-    else
-        split
-    endif
-endfunction
 
 if has("macunix")
     function! s:terminalCwd()
@@ -95,8 +85,6 @@ endfunction
 map <F10> :echo printf('hi<%s> trans<%s> lo<%s>', <SID>syn_name(1,0), <SID>syn_name(0,0), <SID>syn_name(1,1))<CR>
 map <leader><F10> :echo <SID>syn_stack()<CR>
 
-" tag navigation
-nmap <C-p> <C-t>
 " for working inside st
 if $TERM =~# '^st'
     map <F1> <Del>
@@ -107,9 +95,14 @@ endif
 " terminal options
 set scrollback=10000
 autocmd init BufEnter * if &buftype ==# 'terminal' | startinsert | endif
-" q to exit normal mode inside terminal. like less
-autocmd init TermOpen * nnoremap <buffer> q i
-tnoremap <silent> <Esc><Esc> <C-\><C-n>G:call search('^.', 'bc')<CR>
+autocmd init TermOpen * startinsert
+
+" tnoremap <silent> <Esc><Esc> <C-\><C-n>G:call search('^.', 'bc')<CR>
+inoremap jk <Esc>
+tnoremap jk <C-\><C-n>
+inoremap <Esc> <Nop>
+
+" navigation
 tnoremap <silent> <C-H> <C-\><C-n>:call <SID>nav_left()<CR>
 tnoremap <silent> <C-J> <C-\><C-n><C-w>j
 tnoremap <silent> <C-K> <C-\><C-n><C-w>k
@@ -192,13 +185,14 @@ set textwidth=0
 function! s:bsv_set_path(srcdir)
     let pathfile = a:srcdir . '/bsvpath'
     if filereadable(pathfile)
-        set path=
+        let path = []
         for line in readfile(pathfile)
-            if line =~# '^[^$/]'
+            if line =~# '^[^$/~]'
                 let line = a:srcdir . '/' . line
             endif
-            execute "set path+=" . simplify(line)
+            call add(path, expand(line))
         endfor
+        let &path = join(path, ',')
     endif
 endfunction
 
