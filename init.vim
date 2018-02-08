@@ -220,6 +220,23 @@ endfunction
 autocmd init FileType verilog,systemverilog,bsv,julia call <SID>unmapQuotes()
 
 " mucomplete options
-let g:mucomplete#enable_auto_at_startup = 1
 set completeopt=menuone,preview,noinsert
 set shortmess+=c    " Shut off completion messages
+let g:mucomplete#always_use_completeopt = 1
+let g:mucomplete#buffer_relative_paths = 1
+let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#no_mappings = 1
+" Tab to request completion and select+insert next suggestion
+" up/down to select suggestion without inserting it
+" enter to insert selected suggestion and end completion
+imap <Tab> <Plug>(MUcompleteFwd)
+inoremap <silent> <plug>(MUcompleteFwdKey) <right>
+imap <right> <plug>(MUcompleteCycFwd)
+inoremap <silent> <plug>(MUcompleteBwdKey) <left>
+imap <left> <plug>(MUcompleteCycBwd)
+
+autocmd init FileType python set omnifunc=python3complete#Complete completefunc=SendComplete
+let g:mucomplete#chains = {}
+let g:mucomplete#chains.python = ['user', 'c-n', 'file', 'omni']
+let g:mucomplete#can_complete = {'python':{}}
+let g:mucomplete#can_complete.python.user = {t -> exists('g:send_target["ipy_conn"]')}
