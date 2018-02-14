@@ -24,9 +24,9 @@ set title
 set mouse=a
 
 " solarized options
-let g:solarized_termtrans=1
-let g:solarized_italic=0
-let g:solarized_contrast="high"
+let g:solarized_termtrans = 1
+let g:solarized_italic = 0
+let g:solarized_contrast = "high"
 set background=dark
 colorscheme solarized
 
