@@ -100,6 +100,7 @@ autocmd init TermOpen * startinsert
 " tnoremap <silent> <Esc><Esc> <C-\><C-n>G:call search('^.', 'bc')<CR>
 inoremap jk <Esc>
 tnoremap jk <C-\><C-n>
+cnoremap jk <C-c>
 inoremap <Esc> <Nop>
 
 " navigation
@@ -229,14 +230,18 @@ let g:mucomplete#no_mappings = 1
 " Tab to request completion and select+insert next suggestion
 " up/down to select suggestion without inserting it
 " enter to insert selected suggestion and end completion
-imap <Tab> <Plug>(MUcompleteFwd)
+imap <expr> <Tab> pumvisible()? "\<down>" : mucomplete#tab_complete(1)
 inoremap <silent> <plug>(MUcompleteFwdKey) <right>
 imap <right> <plug>(MUcompleteCycFwd)
 inoremap <silent> <plug>(MUcompleteBwdKey) <left>
 imap <left> <plug>(MUcompleteCycBwd)
 
-autocmd init FileType python set omnifunc=python3complete#Complete completefunc=SendComplete
-let g:mucomplete#chains = {}
-let g:mucomplete#chains.python = ['user', 'c-n', 'file', 'omni']
-let g:mucomplete#can_complete = {'python':{}}
-let g:mucomplete#can_complete.python.user = {t -> exists('g:send_target["ipy_conn"]')}
+autocmd init FileType python setlocal omnifunc=python3complete#Complete completefunc=SendComplete
+autocmd init VimEnter * call <SID>InitMUcomplete()
+function s:InitMUcomplete()
+    let g:mucomplete#chains.python = copy(g:mucomplete#chains.default)
+    let g:mucomplete#chains.python = ['user', 'c-n', 'file', 'omni']
+    let g:mucomplete#can_complete.python = copy(g:mucomplete#can_complete.default)
+    let g:mucomplete#can_complete.python.user = {t -> exists('g:send_target["ipy_conn"]')}
+    let g:mucomplete#can_complete.python.omni = {t -> 1}
+endfunction
