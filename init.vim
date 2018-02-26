@@ -242,6 +242,6 @@ function s:InitMUcomplete()
     let g:mucomplete#chains.python = copy(g:mucomplete#chains.default)
     let g:mucomplete#chains.python = ['user', 'c-n', 'file', 'omni']
     let g:mucomplete#can_complete.python = copy(g:mucomplete#can_complete.default)
-    let g:mucomplete#can_complete.python.user = {t -> exists('g:send_target["ipy_conn"]')}
-    let g:mucomplete#can_complete.python.omni = {t -> 1}
+    let g:mucomplete#can_complete.python.omni = { t -> t =~ '\m\%(\k\k\|\.\)$' }
+    let g:mucomplete#can_complete.python.user = {t -> exists('g:send_target["ipy_conn"]') && g:mucomplete#can_complete.python.omni(t)}
 endfunction
