@@ -23,6 +23,9 @@ set shell=fish
 set title
 set mouse=a
 
+let editermdir = $HOME . '/src/editerm/bin'
+if isdirectory(editermdir) | let $PATH = editermdir . ':' . $PATH | endif
+
 " solarized options
 let g:solarized_termtrans = 1
 let g:solarized_italic = 0
