@@ -9,6 +9,7 @@ Plug 'tpope/vim-endwise'
 Plug 'rickhowe/diffchar.vim'
 Plug 'JuliaEditorSupport/julia-vim'
 Plug 'lifepillar/vim-mucomplete'
+Plug 'ap/vim-buftabline'
 call plug#end()
 
 runtime! macros/matchit.vim
@@ -34,9 +35,13 @@ set expandtab tabstop=4 softtabstop=4 shiftwidth=4
 set foldmethod=indent foldlevel=99 foldtext= foldignore=
 set clipboard=unnamedplus " copy/paste using system clipboard
 
-set tabline=%!TabLine(30) " better titles in tabline
+"set tabline=%!TabLine(30) " better titles in tabline
 set undofile " presistent undo
 set ruler " row/col number in statusline
+set confirm " for w, wq, bd, etc., ask for confirmation instead of failing
+set hidden  " abandoned buffers get hidden
+hi link BufTabLineCurrent PmenuSel
+hi link BufTabLineActive TabLineSel
 
 " commands
 command! W w
@@ -104,20 +109,20 @@ cnoremap jk <C-c>
 inoremap <Esc> <Nop>
 
 " navigation
-tnoremap <silent> <C-H> <C-\><C-n>:call <SID>nav_left()<CR>
-tnoremap <silent> <C-J> <C-\><C-n><C-w>j
-tnoremap <silent> <C-K> <C-\><C-n><C-w>k
-tnoremap <silent> <C-L> <C-\><C-n>:call <SID>nav_right()<CR>
+tnoremap <silent> <C-H> <C-\><C-n>:bprev<CR>
+tnoremap <silent> <C-J> <C-\><C-n><C-w>w
+tnoremap <silent> <C-K> <C-\><C-n><C-w>W
+tnoremap <silent> <C-L> <C-\><C-n>:bnext<CR>
 
-nnoremap <silent> <C-H> :call <SID>nav_left()<CR>
-nnoremap <silent> <C-J> <C-w>j
-nnoremap <silent> <C-K> <C-w>k
-nnoremap <silent> <C-L> :call <SID>nav_right()<CR>
+nnoremap <silent> <C-H> :bprev<CR>
+nnoremap <silent> <C-J> <C-w>w
+nnoremap <silent> <C-K> <C-w>W
+nnoremap <silent> <C-L> :bnext<CR>
 
-inoremap <silent> <C-H> <C-o>:call <SID>nav_left()<CR>
-inoremap <silent> <C-J> <C-o><C-w>j
-inoremap <silent> <C-K> <C-o><C-w>k
-inoremap <silent> <C-L> <C-o>:call <SID>nav_right()<CR>
+inoremap <silent> <C-H> <C-o>:bprev<CR>
+inoremap <silent> <C-J> <C-o><C-w>w
+inoremap <silent> <C-K> <C-o><C-w>W
+inoremap <silent> <C-L> <C-o>:bnext<CR>
 
 inoremap <Left> <Nop>
 inoremap <Right> <Nop>
@@ -238,7 +243,7 @@ imap <left> <plug>(MUcompleteCycBwd)
 
 autocmd init FileType python setlocal omnifunc=python3complete#Complete completefunc=SendComplete
 autocmd init VimEnter * call <SID>InitMUcomplete()
-function s:InitMUcomplete()
+function! s:InitMUcomplete()
     let g:mucomplete#chains.python = copy(g:mucomplete#chains.default)
     let g:mucomplete#chains.python = ['user', 'c-n', 'file', 'omni']
     let g:mucomplete#can_complete.python = copy(g:mucomplete#can_complete.default)
