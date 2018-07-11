@@ -46,8 +46,17 @@ hi link BufTabLineActive TabLineSel
 " commands
 command! -complete=help -nargs=? H vert help <args>
 command! BD bnext|bd #
+cnoremap <silent> q<CR> :call <SID>Close()<CR>
 cnoreabbrev vt vsp +term
 cnoreabbrev ht split +term
+
+function! s:Close()
+    if len(filter(range(1, bufnr('$')), 'buflisted(v:val) && bufname(v:val) != ""')) > 1
+        :bnext|bd #
+    else
+        :quit
+    endif
+endfunction
 
 if has("macunix")
     function! s:terminalCwd()
