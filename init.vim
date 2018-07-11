@@ -44,11 +44,8 @@ hi link BufTabLineCurrent PmenuSel
 hi link BufTabLineActive TabLineSel
 
 " commands
-command! W w
-command! Q q
-command! WQ wq
 command! -complete=help -nargs=? H vert help <args>
-cnoreabbrev nt tabnew +term
+command! BD bnext|bd #
 cnoreabbrev vt vsp +term
 cnoreabbrev ht split +term
 
