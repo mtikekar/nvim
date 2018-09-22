@@ -1,17 +1,19 @@
 call plug#begin()
 Plug 'altercation/vim-colors-solarized'
-Plug 'ntpeters/vim-better-whitespace'
+Plug 'ntpeters/vim-better-whitespace' " highlight and strip trailing whitespace
 Plug 'mtikekar/nvim-send-to-term', {'do': ':UpdateRemotePlugins'}
 Plug 'mtikekar/vim-bsv'
 Plug 'dag/vim-fish'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-endwise'
-Plug 'rickhowe/diffchar.vim'
+Plug 'tpope/vim-endwise' " insert `end` after `begin`
+Plug 'rickhowe/diffchar.vim' " highlight exact differences in diff mode
 Plug 'JuliaEditorSupport/julia-vim'
-Plug 'lifepillar/vim-mucomplete'
-Plug 'ap/vim-buftabline'
+Plug 'lifepillar/vim-mucomplete' " manage completion sources and show matches automatically
+Plug 'ap/vim-buftabline' " show buffers in tabline, use buffers not tabs
+Plug 'jeetsukumaran/vim-pythonsense' " ac, af, ad text objects
 call plug#end()
 
+" use % to also go between `begin/end`. default is just () {} []
 runtime! macros/matchit.vim
 
 augroup init
@@ -35,11 +37,11 @@ set expandtab tabstop=4 softtabstop=4 shiftwidth=4
 set foldmethod=indent foldlevel=99 foldtext= foldignore=
 set clipboard=unnamedplus " copy/paste using system clipboard
 
-"set tabline=%!TabLine(30) " better titles in tabline
 set undofile " presistent undo
 set ruler " row/col number in statusline
 set confirm " for w, wq, bd, etc., ask for confirmation instead of failing
 set hidden  " abandoned buffers get hidden
+" more consistent colors for ap/vim-buftabline
 hi link BufTabLineCurrent PmenuSel
 hi link BufTabLineActive TabLineSel
 
@@ -96,14 +98,12 @@ endif
 
 " terminal options
 set scrollback=10000
-autocmd init BufEnter * if &buftype ==# 'terminal' | startinsert | endif
-autocmd init TermOpen * startinsert
+" enter insert mode on starting and entering a terminal
+autocmd init TermOpen * startinsert | autocmd BufEnter <buffer> startinsert
 
-" tnoremap <silent> <Esc><Esc> <C-\><C-n>G:call search('^.', 'bc')<CR>
 inoremap jk <Esc>
 tnoremap jk <C-\><C-n>
 cnoremap jk <C-c>
-inoremap <Esc> <Nop>
 
 " navigation
 tnoremap <silent> <C-H> <C-\><C-n>:bprev<CR>
@@ -120,33 +120,6 @@ inoremap <silent> <C-H> <C-o>:bprev<CR>
 inoremap <silent> <C-J> <C-o><C-w>w
 inoremap <silent> <C-K> <C-o><C-w>W
 inoremap <silent> <C-L> <C-o>:bnext<CR>
-
-inoremap <Left> <Nop>
-inoremap <Right> <Nop>
-nnoremap <Left> <Nop>
-nnoremap <Down> <Nop>
-nnoremap <Up> <Nop>
-nnoremap <Right> <Nop>
-
-function! s:nav_left()
-    " move one window left or if left-most, move one tab left
-    let oldw = winnr()
-    wincmd h
-    if winnr() ==# oldw
-        tabprevious
-        " move to bottom-right window
-        wincmd b
-    endif
-endfunction
-
-function! s:nav_right()
-    let oldw = winnr()
-    wincmd l
-    if winnr() ==# oldw
-        tabnext
-        wincmd t
-    endif
-endfunction
 
 " Insert mappings for ( [ { ' "
 " [ -> [], [[ -> [, [] -> [], ] -> ]
