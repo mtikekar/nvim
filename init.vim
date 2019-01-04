@@ -37,6 +37,7 @@ set expandtab tabstop=4 softtabstop=4 shiftwidth=4
 set foldmethod=indent foldlevel=99 foldtext= foldignore=
 set clipboard=unnamedplus " copy/paste using system clipboard
 
+set nofixeol " don't add eol to existing files
 set undofile " presistent undo
 set ruler " row/col number in statusline
 set confirm " for w, wq, bd, etc., ask for confirmation instead of failing
@@ -98,8 +99,8 @@ endif
 
 " terminal options
 set scrollback=10000
-" enter insert mode on starting and entering a terminal
-autocmd init TermOpen * startinsert | autocmd BufEnter <buffer> startinsert
+" enter insert mode on starting a terminal
+autocmd init TermOpen * startinsert
 
 inoremap jk <Esc>
 tnoremap jk <C-\><C-n>
