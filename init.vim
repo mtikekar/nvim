@@ -37,17 +37,26 @@ set expandtab tabstop=4 softtabstop=4 shiftwidth=4
 set foldmethod=indent foldlevel=99 foldtext= foldignore=
 set clipboard=unnamedplus " copy/paste using system clipboard
 
+if has("macunix")
+    " gui applications don't get bash-initialized env
+    let $PATH = "/usr/local/bin:" . $PATH
+    " using system clipboard breaks block pasting
+    set clipboard=
+endif
+
 set nofixeol " don't add eol to existing files
 set undofile " presistent undo
 set ruler " row/col number in statusline
 set confirm " for w, wq, bd, etc., ask for confirmation instead of failing
 set hidden  " abandoned buffers get hidden
+
 " more consistent colors for ap/vim-buftabline
 hi link BufTabLineCurrent PmenuSel
 hi link BufTabLineActive TabLineSel
 
 " commands
 command! -complete=help -nargs=? H vert help <args>
+" TODO: handle situation when # is closed
 command! Bd b#|bd #
 cnoreabbrev vt vsp +term
 cnoreabbrev ht split +term
@@ -107,20 +116,20 @@ tnoremap jk <C-\><C-n>
 cnoremap jk <C-c>
 
 " navigation
-tnoremap <silent> <C-H> <C-\><C-n>:bprev<CR>
-tnoremap <silent> <C-J> <C-\><C-n><C-w>w
-tnoremap <silent> <C-K> <C-\><C-n><C-w>W
-tnoremap <silent> <C-L> <C-\><C-n>:bnext<CR>
+tnoremap <silent> <C-J> <C-\><C-n>:bprev<CR>
+tnoremap <silent> <C-L> <C-\><C-n><C-w>w
+tnoremap <silent> <C-H> <C-\><C-n><C-w>W
+tnoremap <silent> <C-K> <C-\><C-n>:bnext<CR>
 
-nnoremap <silent> <C-H> :bprev<CR>
-nnoremap <silent> <C-J> <C-w>w
-nnoremap <silent> <C-K> <C-w>W
-nnoremap <silent> <C-L> :bnext<CR>
+nnoremap <silent> <C-J> :bprev<CR>
+nnoremap <silent> <C-L> <C-w>w
+nnoremap <silent> <C-H> <C-w>W
+nnoremap <silent> <C-K> :bnext<CR>
 
-inoremap <silent> <C-H> <C-o>:bprev<CR>
-inoremap <silent> <C-J> <C-o><C-w>w
-inoremap <silent> <C-K> <C-o><C-w>W
-inoremap <silent> <C-L> <C-o>:bnext<CR>
+inoremap <silent> <C-J> <C-o>:bprev<CR>
+inoremap <silent> <C-L> <C-o><C-w>w
+inoremap <silent> <C-H> <C-o><C-w>W
+inoremap <silent> <C-K> <C-o>:bnext<CR>
 
 " Insert mappings for ( [ { ' "
 " [ -> [], [[ -> [, [] -> [], ] -> ]
