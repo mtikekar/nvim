@@ -11,6 +11,7 @@ Plug 'JuliaEditorSupport/julia-vim'
 Plug 'lifepillar/vim-mucomplete' " manage completion sources and show matches automatically
 Plug 'ap/vim-buftabline' " show buffers in tabline, use buffers not tabs
 Plug 'jeetsukumaran/vim-pythonsense' " ac, af, ad text objects
+Plug 'python/black'
 call plug#end()
 
 " use % to also go between `begin/end`. default is just () {} []
