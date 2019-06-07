@@ -196,7 +196,7 @@ function! s:read_template(ext)
 endfunction
 
 " julia
-let g:default_julia_version = '0.6'
+let g:default_julia_version = '1.0'
 let g:latex_to_unicode_auto = 1
 
 " override mapping for single quote
