@@ -14,6 +14,8 @@ Plug 'jeetsukumaran/vim-pythonsense' " ac, af, ad text objects
 Plug 'python/black' " format python files
 Plug 'natebosch/vim-lsc' " language server client
 call plug#end()
+" TODO: consider moving python/black to lsc with pyls-black. Is autoformatting on
+" write too extreme?
 
 " use % to also go between `begin/end`. default is just () {} []
 runtime! macros/matchit.vim
@@ -43,6 +45,7 @@ if has("macunix")
     " gui applications don't get bash-initialized env
     let $PATH = "/usr/local/bin:" . $PATH
     " using system clipboard breaks block pasting
+    " TODO: see bfredl/nvim-miniyank
     set clipboard=
 endif
 
@@ -51,6 +54,7 @@ set undofile " presistent undo
 set ruler " row/col number in statusline
 set confirm " for w, wq, bd, etc., ask for confirmation instead of failing
 set hidden  " abandoned buffers get hidden
+" TODO: reconsider hidden and confirm
 
 " more consistent colors for ap/vim-buftabline
 hi link BufTabLineCurrent PmenuSel
@@ -223,7 +227,11 @@ inoremap <silent> <plug>(MUcompleteFwdKey) <right>
 imap <right> <plug>(MUcompleteCycFwd)
 inoremap <silent> <plug>(MUcompleteBwdKey) <left>
 imap <left> <plug>(MUcompleteCycBwd)
+" TODO: consider using standard keybindings if such a standard exists
 
+" TODO: mucomplete python chain: SendComplete, then vim-lsc. Set can_complete for both.
+" TODO: switch pyls virtual env with completion suggestions
+" TODO: show call signature like ncm2-jedi does
 "autocmd init FileType python setlocal omnifunc=python3complete#Complete completefunc=SendComplete
 "autocmd init VimEnter * call <SID>InitMUcomplete()
 "function! s:InitMUcomplete()
