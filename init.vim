@@ -57,19 +57,29 @@ set hidden  " abandoned buffers get hidden
 " TODO: reconsider hidden and confirm
 
 " more consistent colors for ap/vim-buftabline
-hi link BufTabLineCurrent PmenuSel
-hi link BufTabLineActive TabLineSel
+hi link BufTabLineActive TabLine
 
 " commands
-command! -complete=help -nargs=? H vert help <args>
-" TODO: handle situation when # is closed
-command! Bd b#|bd #
+command! -complete=help -nargs=? Help vert help <args>
 cnoreabbrev vt vsp +term
 cnoreabbrev ht split +term
+command! Bd call <SID>bufDelete()
+
+function! s:bufDelete()
+    " Delete current buffer and switch to next buffer in list (or previous
+    " buffer if current buffer is last in list)
+    if bufnr('') == buftabline#user_buffers()[-1]
+        bprevious
+    else
+        bnext
+    endif
+    bdelete #
+endfunction
 
 if has("macunix")
     function! s:terminalCwd()
-        let f = systemlist("lsof -Fn -a -d cwd -p " . b:terminal_job_pid)
+        let cmd = ['/usr/sbin/lsof', '-Fn', '-a', '-d', 'cwd', '-p', b:terminal_job_pid]
+        let f = systemlist(cmd)
         " last element in list f is 'n<cwd>'. Remove 'n' and return
         return strcharpart(f[-1], 1)
     endfunction
@@ -212,7 +222,7 @@ endfunction
 autocmd init FileType verilog,systemverilog,bsv,julia call <SID>unmapQuotes()
 
 " mucomplete options
-set completeopt=menuone,preview,noinsert
+set completeopt=menuone,noinsert
 set shortmess+=c    " Shut off completion messages
 
 let g:mucomplete#always_use_completeopt = 1
