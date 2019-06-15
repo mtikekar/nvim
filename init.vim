@@ -13,6 +13,7 @@ Plug 'ap/vim-buftabline' " show buffers in tabline, use buffers not tabs
 Plug 'jeetsukumaran/vim-pythonsense' " ac, af, ad text objects
 Plug 'python/black' " format python files
 Plug 'natebosch/vim-lsc' " language server client
+Plug 'bfredl/nvim-miniyank' " fix clipboard=unnamedplus with block paste
 call plug#end()
 " TODO: consider moving python/black to lsc with pyls-black. Is autoformatting on
 " write too extreme?
@@ -40,13 +41,12 @@ colorscheme solarized
 set expandtab tabstop=4 softtabstop=4 shiftwidth=4
 set foldmethod=indent foldlevel=99 foldtext= foldignore=
 set clipboard=unnamedplus " copy/paste using system clipboard
+map p <Plug>(miniyank-autoput)
+map P <Plug>(miniyank-autoPut)
 
 if has("macunix")
     " gui applications don't get bash-initialized env
     let $PATH = "/usr/local/bin:" . $PATH
-    " using system clipboard breaks block pasting
-    " TODO: see bfredl/nvim-miniyank
-    set clipboard=
 endif
 
 set nofixeol " don't add eol to existing files
