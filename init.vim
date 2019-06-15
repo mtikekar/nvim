@@ -11,7 +11,8 @@ Plug 'JuliaEditorSupport/julia-vim'
 Plug 'lifepillar/vim-mucomplete' " manage completion sources and show matches automatically
 Plug 'ap/vim-buftabline' " show buffers in tabline, use buffers not tabs
 Plug 'jeetsukumaran/vim-pythonsense' " ac, af, ad text objects
-Plug 'python/black'
+Plug 'python/black' " format python files
+Plug 'natebosch/vim-lsc' " language server client
 call plug#end()
 
 " use % to also go between `begin/end`. default is just () {} []
@@ -209,6 +210,7 @@ autocmd init FileType verilog,systemverilog,bsv,julia call <SID>unmapQuotes()
 " mucomplete options
 set completeopt=menuone,preview,noinsert
 set shortmess+=c    " Shut off completion messages
+
 let g:mucomplete#always_use_completeopt = 1
 let g:mucomplete#buffer_relative_paths = 1
 let g:mucomplete#enable_auto_at_startup = 1
@@ -222,12 +224,15 @@ imap <right> <plug>(MUcompleteCycFwd)
 inoremap <silent> <plug>(MUcompleteBwdKey) <left>
 imap <left> <plug>(MUcompleteCycBwd)
 
-autocmd init FileType python setlocal omnifunc=python3complete#Complete completefunc=SendComplete
-autocmd init VimEnter * call <SID>InitMUcomplete()
-function! s:InitMUcomplete()
-    let g:mucomplete#chains.python = copy(g:mucomplete#chains.default)
-    let g:mucomplete#chains.python = ['user', 'c-n', 'file', 'omni']
-    let g:mucomplete#can_complete.python = copy(g:mucomplete#can_complete.default)
-    let g:mucomplete#can_complete.python.omni = { t -> t =~ '\m\%(\k\k\|\.\)$' }
-    let g:mucomplete#can_complete.python.user = {t -> exists('g:send_target["ipy_conn"]') && g:mucomplete#can_complete.python.omni(t)}
-endfunction
+"autocmd init FileType python setlocal omnifunc=python3complete#Complete completefunc=SendComplete
+"autocmd init VimEnter * call <SID>InitMUcomplete()
+"function! s:InitMUcomplete()
+"    let g:mucomplete#chains.python = copy(g:mucomplete#chains.default)
+"    let g:mucomplete#chains.python = ['user', 'c-n', 'file', 'omni']
+"    let g:mucomplete#can_complete.python = copy(g:mucomplete#can_complete.default)
+"    let g:mucomplete#can_complete.python.omni = { t -> t =~ '\m\%(\k\k\|\.\)$' }
+"    let g:mucomplete#can_complete.python.user = {t -> exists('g:send_target["ipy_conn"]') && g:mucomplete#can_complete.python.omni(t)}
+"endfunction
+
+let g:lsc_server_commands = {'python':'env VIRTUAL_ENV=/Users/mtikekar/.conda/envs/pytorch pyls'}
+let g:lsc_auto_map = {'defaults': v:true, 'Completion': 'omnifunc'}
