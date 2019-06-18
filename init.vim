@@ -12,11 +12,9 @@ Plug 'lifepillar/vim-mucomplete' " manage completion sources and show matches au
 Plug 'ap/vim-buftabline' " show buffers in tabline, use buffers not tabs
 Plug 'jeetsukumaran/vim-pythonsense' " ac, af, ad text objects
 Plug 'python/black' " format python files
-Plug 'natebosch/vim-lsc' " language server client
+Plug 'davidhalter/jedi-vim' " completions for python
 Plug 'bfredl/nvim-miniyank' " fix clipboard=unnamedplus with block paste
 call plug#end()
-" TODO: consider moving python/black to lsc with pyls-black. Is autoformatting on
-" write too extreme?
 
 " use % to also go between `begin/end`. default is just () {} []
 runtime! macros/matchit.vim
@@ -63,6 +61,8 @@ hi link BufTabLineActive TabLine
 command! -complete=help -nargs=? Help vert help <args>
 cnoreabbrev vt vsp +term
 cnoreabbrev ht split +term
+" write without sudo
+cmap w!! w !sudo tee > /dev/null %
 command! Bd call <SID>bufDelete()
 
 function! s:bufDelete()
@@ -222,8 +222,11 @@ endfunction
 autocmd init FileType verilog,systemverilog,bsv,julia call <SID>unmapQuotes()
 
 " mucomplete options
-set completeopt=menuone,noinsert
+set completeopt-=preview
+set completeopt+=longest,menuone,noinsert
 set shortmess+=c    " Shut off completion messages
+
+let g:jedi#popup_on_dot = 0
 
 let g:mucomplete#always_use_completeopt = 1
 let g:mucomplete#buffer_relative_paths = 1
@@ -239,18 +242,19 @@ inoremap <silent> <plug>(MUcompleteBwdKey) <left>
 imap <left> <plug>(MUcompleteCycBwd)
 " TODO: consider using standard keybindings if such a standard exists
 
-" TODO: mucomplete python chain: SendComplete, then vim-lsc. Set can_complete for both.
-" TODO: switch pyls virtual env with completion suggestions
-" TODO: show call signature like ncm2-jedi does
-"autocmd init FileType python setlocal omnifunc=python3complete#Complete completefunc=SendComplete
-"autocmd init VimEnter * call <SID>InitMUcomplete()
-"function! s:InitMUcomplete()
-"    let g:mucomplete#chains.python = copy(g:mucomplete#chains.default)
-"    let g:mucomplete#chains.python = ['user', 'c-n', 'file', 'omni']
-"    let g:mucomplete#can_complete.python = copy(g:mucomplete#can_complete.default)
-"    let g:mucomplete#can_complete.python.omni = { t -> t =~ '\m\%(\k\k\|\.\)$' }
-"    let g:mucomplete#can_complete.python.user = {t -> exists('g:send_target["ipy_conn"]') && g:mucomplete#can_complete.python.omni(t)}
-"endfunction
+command! -nargs=? -complete=file SetPyEnv call <SID>pyEnv(<f-args>)
+command PyEnv py3 print(jedi_vim.current_environment)
+function! s:pyEnv(...)
+    if a:0 == 0
+        py3 os.environ.pop("VIRTUAL_ENV", None)
+    else
+        call py3eval('os.environ.__setitem__("VIRTUAL_ENV", "' . a:1 . '")')
+    endif
+    py3 jedi_vim.current_environment = (None, None)
+endfunction
 
-let g:lsc_server_commands = {'python':'env VIRTUAL_ENV=/Users/mtikekar/.conda/envs/pytorch pyls'}
-let g:lsc_auto_map = {'defaults': v:true, 'Completion': 'omnifunc'}
+autocmd init FileType python setlocal completefunc=SendComplete
+let g:mucomplete#can_complete = {'python' : {'user' : { t -> SendCanComplete(t)}}}
+let g:mucomplete#chains = {'python' : ['path', 'user', 'omni', 'keyn', 'dict', 'uspl']}
+" run once to register the function
+autocmd init FileType python call SendCanComplete('')
