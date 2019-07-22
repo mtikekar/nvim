@@ -255,6 +255,6 @@ endfunction
 
 autocmd init FileType python setlocal completefunc=SendComplete
 let g:mucomplete#can_complete = {'python' : {'user' : { t -> SendCanComplete(t)}}}
-let g:mucomplete#chains = {'python' : ['path', 'user', 'omni', 'keyn', 'dict', 'uspl']}
+let g:mucomplete#chains = {'python' : ['path', 'omni', 'user', 'keyn', 'dict', 'uspl']}
 " run once to register the function
 autocmd init FileType python call SendCanComplete('')
